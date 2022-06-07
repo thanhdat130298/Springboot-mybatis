@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.SpringMybatisXml.Repositories.CategoriesRepository">
+
+	<select id="getAllCategories" resultType="com.example.SpringMybatisXml.Models.Categories.CategoryModel">
+        SELECT * FROM categories
+    </select>
+	<select id="getCategoryByCateId" resultType="com.example.SpringMybatisXml.Models.Categories.CategoryModel">
+        SELECT * FROM categories WHERE cateId = #{cateId}
+    </select>
+	<select id="getLastestCategory" resultType="com.example.SpringMybatisXml.Models.Categories.CategoryModel">
+        SELECT * FROM categories ORDER BY cateId DESC LIMIT 1
+    </select>
+	<insert id="createCategory">
+	    INSERT INTO categories(cateId, name, type) VALUES (#{cateId}, #{name}, #{type})
+    </insert>
+	<update id="updateCategory">
+    	UPDATE categories SET name=#{name}, type=#{type} where cateId=#{cateId}
+    </update>
+	<delete id="deleteCatgogry">
+    	DELETE FROM categories WHERE cateId = #{cateId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.SpringMybatisXml.Repositories.CommentsRepository">
+
+	<select id="getCommentsByPost" resultType="com.example.SpringMybatisXml.Models.Comments.CommentModel">
+        SELECT * FROM comments WHERE comments.postId = #{postId} ORDER BY created LIMIT #{size} OFFSET #{no}
+    </select>
+	<select id="getComment" resultType="com.example.SpringMybatisXml.Models.Comments.CommentModel">
+        SELECT * FROM comments WHERE userId = #{userId} and cmtId = #{cmtId}
+    </select>
+	<insert id="addComment">
+	    INSERT INTO comments(userId, content, postId, parentId) VALUES (#{userId}, #{content}, #{postId} , #{parentId})
+    </insert>
+	<update id="updateComment">
+    	UPDATE comments SET postId=#{postId}, content=#{content}, userId=#{userId}, parentId=#{parentId} WHERE cmtId=#{cmtId}
+    </update>
+	<delete id="deleteComment">
+    	DELETE FROM comments WHERE cmtId = #{cmtId}
+    </delete>
+	<delete id="deleteCommentByPostId">
+    	DELETE FROM comments WHERE postId = #{postId}
+    </delete>
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.SpringMybatisXml.Repositories.PostsRepository">
+
+	<select id="getAllPostsByUserId" resultType="com.example.SpringMybatisXml.Models.Posts.PostModel">
+        SELECT * FROM posts INNER JOIN users ON posts.userId = users.userId WHERE users.userId = #{userId} ORDER BY #{sortBy} LIMIT #{rowSize} OFFSET #{pageNo}
+    </select>
+	<select id="getAllPosts" resultType="com.example.SpringMybatisXml.Models.Posts.PostModel">
+        SELECT * FROM users INNER JOIN posts ON users.userId = posts.userId ORDER BY #{sortBy} LIMIT #{rowSize} OFFSET #{pageNo}
+    </select>
+	<select id="getLatestPost" resultType="com.example.SpringMybatisXml.Models.Posts.PostModel">
+        SELECT * FROM posts ORDER BY postId DESC LIMIT 1
+    </select>
+	<select id="countAll" resultType="int">
+        SELECT COUNT(postId) FROM posts 
+    </select>
+	<select id="countAllByUserId" resultType="int">
+        SELECT COUNT(postId) FROM posts WHERE userId = #{userId}
+    </select>
+	<select id="getPostById" resultType="com.example.SpringMybatisXml.Models.Posts.PostModel">
+        SELECT * FROM posts WHERE postId = #{postId}
+    </select>
+	<insert id="createPost">
+	    INSERT INTO posts(postId, name, content, liked, created, description, userId, cateId, actived) VALUES (#{postId}, #{name}, #{content} , #{liked}, #{created}, #{description}, #{userId}, #{cateId}, 1)
+    </insert>
+	<delete id="deletePost">
+    	DELETE FROM posts WHERE postId = #{postId}
+    </delete>
+	<update id="updatePost">
+    	UPDATE posts SET name=#{name}, content=#{content}, liked=#{liked}, created=#{created}, description=#{description}, cateId=#{cateId}, actived=1, userId=#{userId} where postId=#{postId}
+    </update>
+</mapper>

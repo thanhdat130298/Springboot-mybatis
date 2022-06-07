@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.SpringMybatisXml.Repositories.UsersRepository">
+
+	<select id="getAllUsers" resultType="com.example.SpringMybatisXml.Models.Users.UserResponse">
+        SELECT * FROM users
+    </select>
+	<select id="getLatestUser" resultType="com.example.SpringMybatisXml.Models.Users.UserModel">
+        SELECT * FROM users ORDER BY userId DESC LIMIT 1
+    </select>
+	<select id="countAll" resultType="int">
+        SELECT COUNT(username) FROM users
+    </select>
+	<select id="findAll" resultType="com.example.SpringMybatisXml.Models.Users.UserResponse">
+        SELECT * FROM users ORDER BY #{sortBy} LIMIT #{rowSize} OFFSET #{pageNo}
+    </select>
+	<select id="getByUserId" resultType="com.example.SpringMybatisXml.Models.Users.UserModel">
+        SELECT * FROM users WHERE userId = #{userId}
+    </select>
+	<select id="getUserByUsername" resultType="com.example.SpringMybatisXml.Models.Users.UserModel">
+        SELECT * FROM users INNER JOIN roles ON users.roleId = roles.roleId WHERE username = #{username} 
+    </select>
+	<select id="getUserByUsernameForAuthen" resultType="com.example.SpringMybatisXml.Models.Users.UserModel">
+        SELECT * FROM users WHERE username = #{username}
+    </select>
+	<insert id="createUser">
+	    INSERT INTO users(userId, username, password, displayName, gender, birthday, phoneNumber, email, isActive, roleId) VALUES (#{userId}, #{username}, #{password} , #{displayName}, #{gender}, #{birthday}, #{phoneNumber}, #{email}, #{isActive}, 1)
+    </insert>
+	<delete id="deleteUser">
+		DELETE FROM posts WHERE posts.userId = #{userId};
+    	DELETE FROM users WHERE userId = #{userId}
+    </delete>
+	<update id="updateUser">
+    	Update users set username=#{username}, displayName=#{displayName}, gender=#{gender}, birthday=#{birthday}, phoneNumber=#{phoneNumber}, email=#{email}, isActive=#{isActive} where userId=#{userId}
+    </update>
+	<update id="updatePassword">
+    	UPDATE users SET password = #{password} WHERE users.username = #{username};
+    </update>
+</mapper>

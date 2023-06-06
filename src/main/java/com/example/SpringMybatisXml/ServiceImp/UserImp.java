@@ -30,7 +30,7 @@ public class UserImp implements UserService {
 
 	@Autowired
 	UsersRepository uRepo;
-	
+
 	@Autowired
 	AuthenRepository aRepo;
 
@@ -42,19 +42,15 @@ public class UserImp implements UserService {
 //		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
 //		Object principal = authentication.getPrincipal();
-		System.out.println(utils.getRole());
-		if (utils.getRole() == Role.ADMIN) {
-			UsersDTO users = new UsersDTO();
-			int total = uRepo.countAll();
-			List<UserResponse> data = uRepo.findAll(sortBy, rowSize, pageNo > 0 ? (pageNo - 1) * rowSize : 0);
-			users.setItems(data);
-			users.setPageNo(pageNo > 1 ? pageNo : 1);
-			users.setRowSize(rowSize);
-			users.setTotal(total);
-			users.setCount(data.size());
-			return users;
-		}
-		throw new BadRequest400("You have not permission to do that!");
+		UsersDTO users = new UsersDTO();
+		int total = uRepo.countAll();
+		List<UserResponse> data = uRepo.findAll(sortBy, rowSize, pageNo > 0 ? (pageNo - 1) * rowSize : 0);
+		users.setItems(data);
+		users.setPageNo(pageNo > 1 ? pageNo : 1);
+		users.setRowSize(rowSize);
+		users.setTotal(total);
+		users.setCount(data.size());
+		return users;
 	}
 
 	@Override
@@ -78,7 +74,7 @@ public class UserImp implements UserService {
 		user.setPassword(pwEncoded);
 		UserModel lastestUser = uRepo.getLatestUser();
 		user.setUserId(utils.autoCreaId(lastestUser != null ? lastestUser.getUserId() : 0));
-		user.setIsActive(1);
+		user.setActive(true);
 		if (uRepo.createUser(user) != 1)
 			new BadRequest400("Could not create user !");
 //		ItemUserDTO u = new ItemUserDTO("success", HttpStatus.OK.value());
@@ -114,7 +110,7 @@ public class UserImp implements UserService {
 			throw new BadRequest400(message);
 		}
 		userDetails.setUserId(userId);
-		userDetails.setIsActive(1);
+		userDetails.setActive(true);
 		if (uRepo.getByUserId(userId) == null)
 			throw new NotFound404("User is Not Exist!");
 		if (uRepo.updateUser(userDetails) == 0) {
@@ -136,14 +132,11 @@ public class UserImp implements UserService {
 
 	@Override
 	public NotifyModel deleteUser(int userId) {
-		if (utils.getRole() == Role.ADMIN) {
-			UserModel user = uRepo.getByUserId(userId);
-			if (user == null)
-				throw new NotFound404("User is Not Exist!");
-			if (uRepo.deleteUser(userId) == 0)
-				throw new BadRequest400("Could not Delete!");
-			return new NotifyModel("Delete successfully!", HttpStatus.OK.value());
-		}
-		throw new BadRequest400("You have not permission to do that!");
+		UserModel user = uRepo.getByUserId(userId);
+		if (user == null)
+			throw new NotFound404("User is Not Exist!");
+		if (uRepo.deleteUser(userId) == 0)
+			throw new BadRequest400("Could not Delete!");
+		return new NotifyModel("Delete successfully!", HttpStatus.OK.value());
 	}
 }

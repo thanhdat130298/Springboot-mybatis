@@ -12,7 +12,8 @@ public interface TagsRepository {
 
 	 public List<TagModel> getAllTags();
 	 public int createTag(TagModel tag);
-	 public TagModel getTagById(int tagId);
+	 public TagModel NotFound404(int tagId);
 	 public int updateTag(TagModel tag);
 	 public int deleteTag(int tagId);
+	 public TagModel getTagById(int tagId);
 }

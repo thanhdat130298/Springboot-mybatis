@@ -40,7 +40,7 @@ public class AuthenImp implements AuthenService {
 		if (isLogin) {
 			res.setMessage("Login success!");
 			UserModel userInfo = UserService.getUserByUsername(user.getUsername());
-			UserInfoModel tokenInfo = new UserInfoModel(userInfo.getUsername(), userInfo.getDisplayName(), userInfo.getUserId(), userInfo.getRoleName());
+			UserInfoModel tokenInfo = new UserInfoModel(userInfo.getUsername(), userInfo.getDisplayName(), userInfo.getUserId(), userInfo.getRoleName(), userInfo.getPassword());
 			res.setToken(Helper.GenerateToken(tokenInfo));
 			res.setStatus(200);
 		} else {

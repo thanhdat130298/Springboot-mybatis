@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
 import com.example.SpringMybatisXml.Config.Helper;
-import com.example.SpringMybatisXml.Config.Role;
 import com.example.SpringMybatisXml.Config.utils;
-import com.example.SpringMybatisXml.Exception.BadRequest400;
 import com.example.SpringMybatisXml.Exception.NotFound404;
 import com.example.SpringMybatisXml.Models.ModelCommon.NotifyModel;
 import com.example.SpringMybatisXml.Models.Tags.ItemTagDTO;
@@ -36,20 +34,17 @@ public class TagImp implements TagsService {
 
 	@Override
 	public NotifyModel createTag(TagModel tag, Errors errors) {
-		if (utils.getRole() == Role.ADMIN) {
-			// get latest id user to increment
-			if (errors.hasErrors()) {
-				String message = utils.validateInput(errors);
-				throw new BadRequest400(message);
-			}
+		// get latest id user to increment
+		if (errors.hasErrors()) {
+			String message = utils.validateInput(errors);
+			throw new NotFound404(message);
+		}
 //			UserInfoModel tokenInfo = utils.getTokenInfo();
 //			CategoryModel lastestCate = cRepo.getLastestCategory();
 //			cate.setCateId(utils.autoCreaId(lastestCate != null ? lastestCate.getCateId() : 0));
-			if (tRepo.createTag(tag) != 1)
-				new BadRequest400("Could not create tag !");
-			return new NotifyModel("Success", HttpStatus.OK.value());
-		}
-		throw new BadRequest400("You have not permission to create tag !");
+		if (tRepo.createTag(tag) != 1)
+			new NotFound404("Could not create tag !");
+		return new NotifyModel("Success", HttpStatus.OK.value());
 	}
 
 	@Override
@@ -64,35 +59,29 @@ public class TagImp implements TagsService {
 
 	@Override
 	public NotifyModel updateTag(int tagId, TagModel tag, Errors errors) {
-		if (utils.getRole() == Role.ADMIN) {
-			if (errors.hasErrors()) {
-				String message = utils.validateInput(errors);
-				throw new BadRequest400(message);
-			}
-			tag.setTagId(tagId);
-			if (tRepo.getTagById(tagId) == null)
-				throw new NotFound404("Tag is Not Exist!");
-			if (tRepo.updateTag(tag) == 0) {
-				throw new BadRequest400("Could not update!");
-			}
-			return new NotifyModel("Updated!", HttpStatus.OK.value());
+		if (errors.hasErrors()) {
+			String message = utils.validateInput(errors);
+			throw new NotFound404(message);
 		}
-		throw new BadRequest400("You have not permission to update tag !");
+		tag.setTagId(tagId);
+		if (tRepo.getTagById(tagId) == null)
+			throw new NotFound404("Tag is Not Exist!");
+		if (tRepo.updateTag(tag) == 0) {
+			throw new NotFound404("Could not update!");
+		}
+		return new NotifyModel("Updated!", HttpStatus.OK.value());
 
 	}
 
 	@Override
 	public NotifyModel deleteTag(int tagId) {
-		if (utils.getRole() == Role.ADMIN) {
 //			UserInfoModel tokenInfo = utils.getTokenInfo();
-			if (tRepo.getTagById(tagId) == null)
-				throw new NotFound404("Tag is Not Exist!");
+		if (tRepo.getTagById(tagId) == null)
+			throw new NotFound404("Tag is Not Exist!");
 
-			if (tRepo.deleteTag(tagId) == 0)
-				throw new NotFound404("Could not delete this tag!");
-			return new NotifyModel("Deleted!", HttpStatus.OK.value());
-		}
-		throw new BadRequest400("You have not permission to delete tag !");
+		if (tRepo.deleteTag(tagId) == 0)
+			throw new NotFound404("Could not delete this tag!");
+		return new NotifyModel("Deleted!", HttpStatus.OK.value());
 	}
 
 }

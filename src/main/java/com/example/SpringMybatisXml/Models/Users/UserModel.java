@@ -1,6 +1,8 @@
 package com.example.SpringMybatisXml.Models.Users;
 // user
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -29,7 +31,7 @@ public class UserModel implements Serializable {
 //	private String postId; bo
     @NotBlank(message = " is Required")
 	private String password;
-    private int isActive = 1;
+    private boolean isActive =true;
     private String roleName;
     private int roleId;
     

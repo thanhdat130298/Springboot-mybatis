@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +20,9 @@ import com.example.SpringMybatisXml.Models.Posts.ItemPostDTO;
 import com.example.SpringMybatisXml.Models.Posts.PostModel;
 import com.example.SpringMybatisXml.Models.Posts.PostsDTO;
 import com.example.SpringMybatisXml.Services.PostsService;
-
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
+
 @RequestMapping("/api/v1/posts")
 public class PostsController {
 

@@ -17,6 +17,7 @@ import com.example.SpringMybatisXml.Models.Comments.CommentsDTO;
 import com.example.SpringMybatisXml.Models.ModelCommon.NotifyModel;
 import com.example.SpringMybatisXml.Models.Users.UserInfoModel;
 import com.example.SpringMybatisXml.Repositories.CommentsRepository;
+import com.example.SpringMybatisXml.Security.UserDetail;
 import com.example.SpringMybatisXml.Services.CommentsService;
 
 @Service
@@ -43,66 +44,58 @@ public class CommentImp implements CommentsService {
 
 	@Override
 	public NotifyModel addComment(CommentModel cmt) { // postid, content, parentid, userid
-		if (utils.getRole() == Role.ADMIN || utils.getRole() == Role.USER) {
-			UserInfoModel tokenInfo = utils.getTokenInfo();
-			if (uService.getUserById(tokenInfo.getUserId()) != null) {
-				cmt.setUserId(tokenInfo.getUserId());
-				if (cmtRepo.addComment(cmt) != 1)
-					new BadRequest400("Could not comment here!");
-				return new NotifyModel("Success", HttpStatus.OK.value());
-			}
-			throw new NotFound404("User not found!");
+		UserDetail tokenInfo = utils.getTokenInfo();
+		int uId = uService.getUserByUsername(tokenInfo.getUsername()).getUserId();
+		if (uService.getUserById(uId) != null) {
+			cmt.setUserId(uId);
+			if (cmtRepo.addComment(cmt) != 1)
+				new BadRequest400("Could not comment here!");
+			return new NotifyModel("Success", HttpStatus.OK.value());
 		}
-		throw new BadRequest400("You have not permission to comment post!");
+		throw new NotFound404("User not found!");
 	}
 
 	@Override
 	public NotifyModel updateComment(int cmtId, CommentModel cmt) {
-		if (utils.getRole() == Role.ADMIN || utils.getRole() == Role.USER) {
-			UserInfoModel tokenInfo = utils.getTokenInfo();
-			if (uService.getUserById(tokenInfo.getUserId()) != null) {
-				cmt.setUserId(tokenInfo.getUserId());
-				cmt.setCmtId(cmtId);
-				if (cmtRepo.updateComment(cmt) != 1)
-					new BadRequest400("Could not update comment here!");
-				return new NotifyModel("Updated!", HttpStatus.OK.value());
-			}
-			throw new NotFound404("User not found!");
+		UserDetail tokenInfo = utils.getTokenInfo();
+		int uId = uService.getUserByUsername(tokenInfo.getUsername()).getUserId();
+		if (uService.getUserById(uId) != null) {
+			cmt.setUserId(uId);
+			cmt.setCmtId(cmtId);
+			if (cmtRepo.updateComment(cmt) != 1)
+				new BadRequest400("Could not update comment here!");
+			return new NotifyModel("Updated!", HttpStatus.OK.value());
 		}
-		throw new BadRequest400("You have not permission to create post!");
+		throw new NotFound404("User not found!");
 	}
 
 	@Override
 	public CommentModel getComment(int cmtId) { // lay ra dung cmt cua dung nguoi
-		if (utils.getRole() == Role.ADMIN || utils.getRole() == Role.USER) {
-			UserInfoModel tokenInfo = utils.getTokenInfo();
-			if (uService.getUserById(tokenInfo.getUserId()) != null) {
-				if (uService.getUserById(tokenInfo.getUserId()) != null) {
-					CommentModel cmt = cmtRepo.getComment(tokenInfo.getUserId(), cmtId);
-					if (cmt != null) {
-						return cmt;
-					}
-					throw new NotFound404("Not found!");
+		UserDetail tokenInfo = utils.getTokenInfo();
+		int uId = uService.getUserByUsername(tokenInfo.getUsername()).getUserId();
+		if (uService.getUserById(uId) != null) {
+			if (uService.getUserById(uId) != null) {
+				CommentModel cmt = cmtRepo.getComment(uId, cmtId);
+				if (cmt != null) {
+					return cmt;
 				}
-				throw new NotFound404("User not found!");
+				throw new NotFound404("Not found!");
 			}
 			throw new NotFound404("User not found!");
 		}
-		throw new BadRequest400("You have not permission!");
+		throw new NotFound404("User not found!");
 	}
 
 	@Override
 	public NotifyModel deleteComment(int cmtId) {
-		if (utils.getRole() == Role.ADMIN || utils.getRole() == Role.USER) {
-			UserInfoModel tokenInfo = utils.getTokenInfo();
-			CommentModel cmt = cmtRepo.getComment(tokenInfo.getUserId(), cmtId);
-			if (cmt != null) {
-				cmtRepo.deleteComment(cmtId);
-				return new NotifyModel("Deleted!", HttpStatus.OK.value());
-			}
-			throw new NotFound404("Not found!");
+		UserDetail tokenInfo = utils.getTokenInfo();
+		int uId = uService.getUserByUsername(tokenInfo.getUsername()).getUserId();
+		CommentModel cmt = cmtRepo.getComment(uId, cmtId);
+		if (cmt != null) {
+			cmtRepo.deleteComment(cmtId);
+			return new NotifyModel("Deleted!", HttpStatus.OK.value());
 		}
-		throw new BadRequest400("You have not permission to create post!");
+		throw new NotFound404("Not found!");
 	}
 
 }

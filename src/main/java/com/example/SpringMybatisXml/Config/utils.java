@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 
 import com.example.SpringMybatisXml.Exception.UnAuthorized401;
 import com.example.SpringMybatisXml.Models.Users.UserInfoModel;
+import com.example.SpringMybatisXml.Security.UserDetail;
 
 public class utils {
 	public static Integer autoCreaId(Integer id) {
@@ -28,31 +29,17 @@ public class utils {
 		return null;
 	}
 
-	public static UserInfoModel getTokenInfo() {
+	public static UserDetail getTokenInfo() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Object rs = null;
 		if (authentication != null)
 			rs = authentication.getPrincipal();
-		UserInfoModel tokenInfo = (rs != null && !(rs.getClass().getName() == "java.lang.String")) ? (UserInfoModel) rs
+		System.out.println("class"+rs);
+		UserDetail tokenInfo = (rs != null && !(rs.getClass().getName() == "java.lang.String")) ? (UserDetail) rs
 				: null;
 		if (tokenInfo != null)
 			return tokenInfo;
 		else
 			throw new UnAuthorized401("UNAUTHORIZED");
-	}
-
-	public static Role getRole() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Object rs = null;
-		if (authentication != null)
-			rs = authentication.getPrincipal();
-		UserInfoModel tokenInfo = (rs != null && !(rs.getClass().getName() == "java.lang.String")) ? (UserInfoModel) rs
-				: null;
-		if (tokenInfo != null) {
-			if (tokenInfo.getRoleName().equals("ADMIN"))
-				return Role.ADMIN;
-			return Role.USER;
-		}
-		return null;
 	}
 }

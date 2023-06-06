@@ -29,6 +29,7 @@ public class Helper {
 		String jwt = JWT.create().withClaim("username", user.getUsername())
 				.withClaim("displayName", user.getDisplayName()).withClaim("userId", user.getUserId())
 				.withClaim("roleName", user.getRoleName())
+				.withClaim("password", user.getPassword())
 				.withExpiresAt(new Date(System.currentTimeMillis() + 999999999))
 //				1 Phút Andiez = 60000
 //				Forever alone = 999999999
@@ -43,7 +44,6 @@ public class Helper {
 			JWTVerifier verifier = JWT.require(algorithm).build(); // Reusable verifier instance
 			verifier.verify(token);
 			// decode to get payload
-			System.out.println(JWT.decode(token).getClaims().get("username"));
 			String username = JWT.decode(token).getClaims().get("username") != null
 					? JWT.decode(token).getClaims().get("username").asString()
 					: "";
@@ -53,8 +53,11 @@ public class Helper {
 			String roleName = JWT.decode(token).getClaims().get("roleName") != null
 					? JWT.decode(token).getClaims().get("roleName").asString()
 					: "";
+			String password = JWT.decode(token).getClaims().get("password") != null
+					? JWT.decode(token).getClaims().get("password").asString()
+							: "";
 			int userId = JWT.decode(token).getClaims().get("userId").asInt();
-			UserInfoModel user = new UserInfoModel(username, displayName, userId, roleName);
+			UserInfoModel user = new UserInfoModel(username, displayName, userId, roleName, password);
 			return user;
 		} catch (JWTVerificationException exception) {
 			System.out.println("Error: " + exception);
@@ -69,7 +72,6 @@ public class Helper {
 	}
 
 	public Boolean isMatchPassword(String password, String pwEncoded) {
-		System.out.println(password + "-" + pwEncoded + ":" + passwordEncoder.matches(password, pwEncoded));
 		boolean isPasswordMatch = passwordEncoder.matches(password, pwEncoded);
 		return isPasswordMatch;
 	}
